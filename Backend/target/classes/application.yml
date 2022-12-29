@@ -1,0 +1,47 @@
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+spring:
+  datasource:
+    password: 26102001
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/final?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false
+    username: root
+  jpa:
+    show-sql: true
+    hibernate:
+      dialect:  org.hibernate.dialect.MySQLInnoDBDialect
+      ddl-auto: create-drop
+      format-sqp: true
+    properties:
+      hibernate:
+        check_nullability:true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+#  mail:
+#    host: localhost
+#    port: 1025
+#    username: hello
+#    password: hello
+#
+#    properties:
+#      mail:
+#        smtp:
+#          ssl:
+#            trust: "*"
+#          auth: true
+#          starttls:
+#            enable: true
+#          connectiontimeout: 5000
+#          timeout: 3000
+#          writetimeout: 5000
+logging:
+  level:
+    org:
+      hibernate:
+        type: TRACE
+
+Unique:
+  title :Title already exists

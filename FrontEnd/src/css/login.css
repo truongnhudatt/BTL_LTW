@@ -1,0 +1,27 @@
+#login-page{
+    border: solid 1px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 200px;
+    max-width: 600px;
+}
+.form-container{
+    margin: 15px;
+}
+.form-custom{
+    width: 100%;
+}
+
+
+.form-custom__username{
+    width: 100%;
+    margin: 5px;
+}
+.form-custom-input{
+    /* background-color: rgb(235, 233, 233); */
+    width: 100%;
+    padding: 8px;
+    margin: 10px;
+}
+
+

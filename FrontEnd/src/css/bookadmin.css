@@ -1,0 +1,11 @@
+.title::-webkit-scrollbar {
+    display: none;
+  }
+.description::-webkit-scrollbar{
+    display: none;
+}
+.button{
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+}

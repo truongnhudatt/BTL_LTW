@@ -1,0 +1,53 @@
+#signup-page{
+    border: solid 1px;
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 200px;
+    max-width: 600px;
+}
+.form-container{
+    
+    margin: 15px;
+}
+.form-custom{
+    
+    width: 100%;
+    margin: 10px;
+}
+.form-custom__fullname{
+    
+    width: 100%;
+}
+.form-custom__firstName{
+    display: inline-block;
+    width: 48%;
+
+     margin-right: 4%;
+}
+.form-custom__lastName{
+    display: inline-block;
+    width: 48%;
+
+}
+.form-custom__username{
+    width: 100%;
+    /* margin: 5px; */
+}
+.form-custom-input{
+    /* background-color: rgb(235, 233, 233); */
+    width: 100%;
+    padding: 5px;
+}
+
+.form-custom-btn-login{
+    display: inline-block;
+    margin: 15px;
+    margin-right: 200px;
+}
+.form-custom-btn-signup{
+    display: inline-block;
+    margin: 15px;
+}
