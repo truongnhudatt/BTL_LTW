@@ -69,7 +69,9 @@ function Addbook() {
         if (id === "-1") {
             axios.post("http://localhost:8080/api/v1/books/save", data).then(response => {
                 if (response.status) {
-                    window.location.reload();
+                    setTimeout(alert('Lưu thông tin sách thành công'), 2000);
+                    window.location.href = "http://localhost:3000/admin/control/book";
+
                 }
             })
                 .catch(error => {
@@ -87,8 +89,8 @@ function Addbook() {
                 response => {
                     console.log(response.data)
                     if (response.status) {
-                        window.location.reload();
                         setTimeout(alert('Lưu thông tin sách thành công'), 2000);
+                        window.location.href = "http://localhost:3000/admin/control/book";
                         data = new FormData();
                     }
                     else {

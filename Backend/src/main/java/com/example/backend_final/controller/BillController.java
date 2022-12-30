@@ -33,15 +33,16 @@ public class BillController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createBill(@RequestBody BillRequest billRequest){
-        return ResponseEntity.ok().body(new MessageResp(HttpStatus.OK,"Created bill successfully!", mapper.toBillDto(billService.createBill(billRequest)) ));
+        return ResponseEntity.ok().body(new MessageResp(HttpStatus.OK,"Created bill successfully!", mapper.toBillDto(billService.createBill(billRequest))));
     }
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllBills(@RequestParam(value = "pageNo",defaultValue = "0") Integer pageNo,
                                          @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize,
-                                         @RequestParam(value = "sortBy",defaultValue = "create") String sortBy){
+                                         @RequestParam(value = "sortBy",defaultValue = "created") String sortBy,
+                                         @RequestParam(value = "username") String username){
         Pageable paging = PageRequest.of(pageNo,pageSize, Sort.by(sortBy));
-        Page<Bill> billPage = billService.findAll(paging);
+        Page<Bill> billPage = billService.findAllByUsername(username, paging);
         List<Bill> billList = billPage.getContent();
 
         List<BillDto> billDtoList = billList.stream().map(b -> mapper.toBillDto(b)).collect(Collectors.toList());
@@ -54,5 +55,4 @@ public class BillController {
         billResp.setLast(billPage.isLast());
         return ResponseEntity.ok().body(new MessageResp(HttpStatus.OK,"Query execute successfully!", billResp));
     }
-
 }

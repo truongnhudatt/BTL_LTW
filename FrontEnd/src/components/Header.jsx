@@ -7,11 +7,14 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
-function Header() {
+function Header({handleKeyword}) {
     let user = JSON.parse(localStorage.getItem("user-info"))
     let jwtToken = JSON.parse(localStorage.getItem("jwtToken"))
     const [totalCartItem, setTotalCartItem] = useState(0);
-    
+    const [keyword, setKeyword] = useState("")
+    useEffect(() => {
+        setKeyword(keyword);
+    },[keyword])
     useEffect(() => {
         if(user){
             axios.get(`http://localhost:8080/api/v1/carts/${user.username}/count`,{
@@ -39,9 +42,12 @@ function Header() {
           </Nav>
           <Nav>
                 {!user ? 
-                <>
+                <>  
+                    <Nav.Link href="/login">Đăng nhập</Nav.Link>
+                    <Nav.Link href="/register">Đăng ký</Nav.Link>
+                    
                     <Form className="d-flex">
-                    <Button variant="btn btn-outline-light">
+                    <Button variant="btn btn-outline-light" onClick={() => {window.location.href = "http://localhost:3000/cart"}}>
                         <img
                             alt=""
                             src="https://salt.tikicdn.com/ts/upload/51/e2/92/8ca7e2cc5ede8c09e34d1beb50267f4f.png"
@@ -57,23 +63,20 @@ function Header() {
                     {user.role === 'USER' ? 
                     <>  
                         <NavDropdown title={`Tài khoản ${ user.firstName} ${user.lastName}`} id="navbarScrollingDropdown">
-                        <NavDropdown.Item href="/cart">Đơn hàng của tôi</NavDropdown.Item>
+                        <NavDropdown.Item href="/history">Lịch sử đặt hàng</NavDropdown.Item>
                         <NavDropdown.Item href="/profile">
                             Tài khoản của tôi
                         </NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item onClick={() => {
                             localStorage.clear();
-                            setTimeout(() => {
-                                window.location.reload();
-                                window.location.href = "localhost:3000/home"
-                            }, 500);
+                            window.location.href = "http://localhost:3000/home";
                         }}>
                             Đăng xuất
                         </NavDropdown.Item>
                         </NavDropdown>
                         <Form className="d-flex">
-                        <Button variant="btn btn-outline-light">
+                        <Button variant="btn btn-outline-light" onClick={() => {window.location.href = "http://localhost:3000/cart"}}>
                             <img
                                 alt=""
                                 src="https://salt.tikicdn.com/ts/upload/51/e2/92/8ca7e2cc5ede8c09e34d1beb50267f4f.png"
@@ -106,7 +109,7 @@ function Header() {
                         </NavDropdown.Item>
                         </NavDropdown>
                         <Form className="d-flex">
-                        <Button variant="btn btn-outline-light">
+                        <Button variant="btn btn-outline-light" onClick={() => {window.location.href = "http://localhost:3000/cart"}}>
                             <img
                                 alt=""
                                 src="https://salt.tikicdn.com/ts/upload/51/e2/92/8ca7e2cc5ede8c09e34d1beb50267f4f.png"
@@ -124,12 +127,13 @@ function Header() {
           </Nav>
           <Form className="d-flex">
             <Form.Control
+                onChange={e => setKeyword(e.target.value)}
               type="search"
               placeholder="Nhập tên sách"
               className="me-2"
               aria-label="Nhập tên sách"
             />
-            <button type="button" class="btn btn-outline-success">Tìm</button>
+            <button type="button" class="btn btn-outline-success" onClick={() => handleKeyword(keyword)}>Tìm</button>
           </Form>
         </Navbar.Collapse>
       </Container>

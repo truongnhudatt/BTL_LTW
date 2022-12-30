@@ -1,5 +1,6 @@
 package com.example.backend_final.controller;
 
+import com.example.backend_final.dto.OrderDetailDto;
 import com.example.backend_final.dto.OrderDto;
 import com.example.backend_final.error.BookNotFoundException;
 import com.example.backend_final.error.OrderException;
@@ -7,6 +8,7 @@ import com.example.backend_final.model.Order;
 import com.example.backend_final.payload.request.OrderQuantityRequest;
 import com.example.backend_final.payload.request.OrderRequest;
 import com.example.backend_final.payload.response.OrderResp;
+import com.example.backend_final.repository.CartItemRepo;
 import com.example.backend_final.repository.OrderRepo;
 import com.example.backend_final.service.OrderService;
 import com.example.backend_final.util.Mapper;
@@ -34,6 +36,9 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private OrderRepo orderRepo;
+
+    @Autowired
+    private CartItemRepo cartItemRepo;
 
     @GetMapping("/all")
     public ResponseEntity<OrderResp> getAllOrders(@RequestParam(value = "pageNo",defaultValue = "0") Integer pageNo,
@@ -70,6 +75,7 @@ public class OrderController {
     public ResponseEntity<?> deleteOrderDetailById(@PathVariable("username") String username,
                                                    @PathVariable("id") Long id){
         orderService.deleteOrderDetail(id);
+        cartItemRepo.deleteCartItem(id);
         return ResponseEntity.ok(orderService.getOrderByUserName(username).stream().map(ord -> mapper.toOrderDto(ord)).collect(Collectors.toList()));
     }
 
@@ -80,8 +86,15 @@ public class OrderController {
 
     @GetMapping("/ord-detail")
     public ResponseEntity<?> getTotal(@RequestParam("ords") List<Long> list){
+//        List<OrderDetailDto> orderDtoList = list.stream().map(id -> mapper.toOrderDetailDto(orderService.getOrderDetailById(id).get())).collect(Collectors.toList());
         BigDecimal dc = BigDecimal.valueOf(list.stream().map(id -> orderService.getOrderDetailById(id).get().getUnitPrice()).mapToDouble(BigDecimal::doubleValue).sum());
         return ResponseEntity.ok().body(dc);
+    }
+    @GetMapping("/ord-details")
+    public ResponseEntity<?> getOrderDetail(@RequestParam("ords") List<Long> list){
+        List<OrderDetailDto> orderDtoList = list.stream().map(id -> mapper.toOrderDetailDto(orderService.getOrderDetailById(id).get())).collect(Collectors.toList());
+        BigDecimal dc = BigDecimal.valueOf(list.stream().map(id -> orderService.getOrderDetailById(id).get().getUnitPrice()).mapToDouble(BigDecimal::doubleValue).sum());
+        return ResponseEntity.ok().body(orderDtoList);
     }
 
 }

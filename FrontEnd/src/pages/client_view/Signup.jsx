@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { TextField } from '@mui/material';
 import { Button } from 'react-bootstrap';
-import Navbarr from '../../components/Navbar';
+import Header from '../../components/Header';
 function Signup() {
 
     const [firstName, setFirstName] = useState("");
@@ -23,6 +23,7 @@ function Signup() {
     const [errorPassword, setErrorPassword] = useState("");
     const [errorUserExist, setErrorUserExist] = useState("");
     const [errorPasswordNotMatch, setErrorPasswordNotMatch] = useState("");
+    
     const navigate = useNavigate();
 
 
@@ -81,7 +82,7 @@ function Signup() {
     }
 
     return (
-        <><Navbarr/>
+        <><Header/>
         <div id="signup-page">
             <div>
                 <h1>Đăng ký</h1>

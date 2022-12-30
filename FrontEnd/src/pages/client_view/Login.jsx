@@ -4,7 +4,7 @@ import '../../css/login.css';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { TextField } from '@mui/material';
-import Navbarr from '../../components/Navbar';
+import Header from '../../components/Header';
 function Signup() {
 
     const [username, setUsername] = useState("");
@@ -57,7 +57,7 @@ function Signup() {
 
     return (
         <>
-        <Navbarr/>
+        <Header/>
         <div id="login-page">
             <div>
                 <h1>Đăng nhập</h1>

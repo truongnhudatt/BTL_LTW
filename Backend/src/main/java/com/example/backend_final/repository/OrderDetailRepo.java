@@ -27,4 +27,5 @@ public interface OrderDetailRepo extends JpaRepository<OrderDetail,Long> {
     @Query("SELECT ord FROM OrderDetail ord WHERE ord.book = ?1 and ord.order = ?2")
     Optional<OrderDetail> findOrderDetail(Book book, Order order);
 
+
 }

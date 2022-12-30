@@ -118,6 +118,7 @@ public class Mapper {
         billDto.setOrderDetailDto(bill.getOrderDetailList().stream().map(ord -> this.toOrderDetailDto(ord)).collect(Collectors.toList()));
         billDto.setTotalPrice(bill.getTotalPrice().floatValue());
         billDto.setCreated(bill.getCreated());
+        billDto.setBillStatus(bill.getBillStatus().toString());
         return billDto;
     }
 

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,5 +114,9 @@ public class BookServiceImpl implements BookService {
         return bookRepo.existsByTitle(title);
     }
 
-
+    @Override
+    @Query("SELECT b FROM Book b WHERE b.title like '$keyword$'")
+    public Page<Book> findBookByKeyword(String keyword, Pageable pageable) {
+        return bookRepo.findBookByKeyword(keyword, pageable);
+    }
 }

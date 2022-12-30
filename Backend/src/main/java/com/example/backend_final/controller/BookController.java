@@ -48,22 +48,6 @@ public class BookController {
     @Autowired
     private BookRepo bookRepo;
 
-    //    @PostMapping("/save")
-//    public ResponseEntity<?> saveBook(
-//        @RequestParam("book") String book,
-//        @RequestParam("image")MultipartFile[] images
-//    ) throws BookNotFoundException, JsonProcessingException {
-//        BookDto bookJson = new BookDto();
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        bookJson = objectMapper.readValue(book, BookDto.class);
-//
-//        List<ImageDto> imageList = Arrays.stream(images).map(item ->
-//                                                            new ImageDto(imageStorageService.storeFile(item)))
-//                                                                    .collect(Collectors.toList());
-//        bookJson.setImageList(imageList);
-////        return ResponseEntity.ok(mapper.toBookDto(bookService.save(mapper.toBook(bookJson))));
-//        return  ResponseEntity.ok().body(new MessageResp(HttpStatus.OK, "", mapper.toBookDto(bookService.save(mapper.toBook(bookJson)))));
-//    }
     @PostMapping("/save")
     public @Valid ResponseEntity<?> saveBook(
             @RequestParam(name="title", required = true)  String title ,
@@ -169,8 +153,15 @@ public class BookController {
     @GetMapping("/all")
     public ResponseEntity<?> getAllBooks(@RequestParam(value = "pageNo",defaultValue = "0") Integer pageNo,
                                           @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize,
-                                          @RequestParam(value = "sortBy",defaultValue = "title") String sortBy){
+                                          @RequestParam(value = "sortBy",defaultValue = "title") String sortBy,
+                                         @RequestParam(value = "keyword", required = false) String keyword){
         Pageable paging = PageRequest.of(pageNo,pageSize, Sort.by(sortBy));
+        if(keyword == null){
+            Page<Book> bookPage = bookService.findAll(paging);
+        }
+        else{
+            Page<Book> bookPage = bookService.findBookByKeyword(keyword,paging);
+        }
         Page<Book> bookPage = bookService.findAll(paging);
         List<Book> bookList = bookPage.getContent();
 
@@ -182,9 +173,28 @@ public class BookController {
         bookResp.setTotalElements(bookPage.getTotalElements());
         bookResp.setTotalPages(bookPage.getTotalPages());
         bookResp.setLast(bookPage.isLast());
-//        return ResponseEntity.ok(bookResp);
         return ResponseEntity.ok().body(new MessageResp(HttpStatus.OK,"", bookResp));
     }
+
+//    @GetMapping("/{keyword}")
+//    public ResponseEntity<?> getAllBooks(@RequestParam(value = "pageNo",defaultValue = "0") Integer pageNo,
+//                                         @RequestParam(value = "pageSize",defaultValue = "10") Integer pageSize,
+//                                         @RequestParam(value = "sortBy",defaultValue = "title") String sortBy,
+//                                         @PathVariable("keyword") String keyword){
+//        Pageable paging = PageRequest.of(pageNo,pageSize, Sort.by(sortBy));
+//        Page<Book> bookPage = bookService.findBookByKeyword(keyword,paging);
+//        List<Book> bookList = bookPage.getContent();
+//
+//        List<BookDto> bookDtoList = bookList.stream().map(b -> mapper.toBookDto(b)).collect(Collectors.toList());
+//        BookResp bookResp = new BookResp();
+//        bookResp.setBookDtoList(bookDtoList);
+//        bookResp.setPageNo(bookPage.getNumber());
+//        bookResp.setPageSize(bookPage.getSize());
+//        bookResp.setTotalElements(bookPage.getTotalElements());
+//        bookResp.setTotalPages(bookPage.getTotalPages());
+//        bookResp.setLast(bookPage.isLast());
+//        return ResponseEntity.ok().body(new MessageResp(HttpStatus.OK,"", bookResp));
+//    }
 
     @GetMapping("/image/{fileName:.+}")
     // /files/06a290064eb94a02a58bfeef36002483.png

@@ -7,6 +7,7 @@ import com.example.backend_final.model.Book;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,4 +33,7 @@ public interface BookService {
     Book updateBook(Long id, BookDto bookDto) throws BookNotFoundException;
 
     boolean existsByTitle(String title);
+
+    @Query("SELECT b FROM Book b WHERE b.title like '$keyword$'")
+    Page<Book> findBookByKeyword(String keyword, Pageable pageable);
 }

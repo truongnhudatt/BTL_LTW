@@ -1,59 +1,17 @@
 import { Add, Remove } from "@mui/icons-material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Navbarr from "./Navbar";
 import { mobile } from "../responsive";
 import { NumericFormat } from "react-number-format";
-const Container = styled.div``;
+import Header from "./Header";
+import Dialog from "./Dialog";
 
-const Wrapper = styled.div`
-  padding: 20px;
-  ${mobile({ padding: "10px" })}
-`;
-
-const Title = styled.h1`
-  font-weight: 300;
-  text-align: center;
-`;
-
-const Top = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-`;
-
-const TopButton = styled.button`
-  padding: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  border: ${(props) => props.type === "filled" && "none"};
-  background-color: ${(props) =>
-    props.type === "filled" ? "black" : "transparent"};
-  color: ${(props) => props.type === "filled" && "white"};
-`;
-
-const TopTexts = styled.div`
-  ${mobile({ display: "none" })}
-`;
-const TopText = styled.span`
-  text-decoration: underline;
-  cursor: pointer;
-  margin: 0px 10px;
-`;
-
-const Bottom = styled.div`
-  display: flex;
-  justify-content: space-between;
-  ${mobile({ flexDirection: "column" })}
-`;
-
-const Info = styled.div`
-  flex: 3;
-`;
 
 const Product = styled.div`
+  margin-bottom:7px;
+  border-bottom: 1px solid #d3d3d3;
+  padding-bottom:20px;
   display: flex;
   justify-content: space-between;
   ${mobile({ flexDirection: "column" })}
@@ -79,7 +37,6 @@ const Details = styled.div`
 
 const ProductName = styled.span``;
 
-const ProductId = styled.span``;
 
 const PriceDetail = styled.div`
     display:inline-block;
@@ -113,46 +70,11 @@ const ProductPrice = styled.div`
   ${mobile({ marginBottom: "20px" })}
 `;
 
-const Hr = styled.hr`
-  background-color: #eee;
-  border: none;
-  height: 1px;
-`;
 
-const Summary = styled.div`
-  flex: 1;
-  border: 0.5px solid lightgray;
-  border-radius: 10px;
-  padding: 20px;
-  height: 50vh;
-`;
-
-const SummaryTitle = styled.h1`
-  font-weight: 200;
-`;
-
-const SummaryItem = styled.div`
-  margin: 30px 0px;
-  display: flex;
-  justify-content: space-between;
-  font-weight: ${(props) => props.type === "total" && "500"};
-  font-size: ${(props) => props.type === "total" && "24px"};
-`;
-
-const SummaryItemText = styled.span``;
-
-const SummaryItemPrice = styled.span``;
-
-const Button = styled.button`
-  width: 100%;
-  padding: 10px;
-  background-color: black;
-  color: white;
-  font-weight: 600;
-`;
 
 const CartItem = ({ orderItem, handlePickItem }) => {
-
+  let user = JSON.parse(localStorage.getItem("user-info"))
+  let jwtToken = JSON.parse(localStorage.getItem("jwtToken"))
   const [isSelected, setSelection] = useState(false);
   const [quantity, setQuantity] = useState(orderItem.quantity);
   useEffect(() => {
@@ -161,7 +83,7 @@ const CartItem = ({ orderItem, handlePickItem }) => {
       "quantity": quantity
     }, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        Authorization: `Bearer ${jwtToken}`,
         Accept: "application/json"
       }
     })
@@ -181,13 +103,48 @@ const CartItem = ({ orderItem, handlePickItem }) => {
       });
     }
   }, [quantity])
+  const [dialog, setDialog] = useState({
+    message: "",
+    isLoading: false,
+    nameProduct: ""
+  });
+  const idProductRef = useRef();
+  const handleDialog = (message, isLoading, id) => {
+    setDialog({
+      message,
+      isLoading,
+      id,
+    });
+  };
+
+  const handleDelete = (id) => {
+    handleDialog("Bạn có muốn xóa sản phẩm đang chọn?", true, id);
+    idProductRef.current = id
+  };
+  const areUSureDelete = (choose) => {
+    if (choose) {
+      handleDialog("", false);
+      // deleteBook(idProductRef.current)
+      axios.delete(`http://localhost:8080/api/v1/orders/${user.username}/delete/detail-order/${idProductRef.current}`,
+      {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: "application/json"
+        }
+      }
+      ).then((response) => {
+        window.location.reload();
+      }).catch(console.error());
+    } else {
+      handleDialog("", false);
+    }
+  };
   return (
     <Product>
       <input value={isSelected} type={"checkbox"} key={orderItem.id} onChange={ e => {
         setSelection(!isSelected);
         sender();
       }} />
-      {/*  onClick={() => sender()} */}
       <ProductDetail className="col-7">
         {orderItem && (<Image src={`http://localhost:8080/api/v1/books/image/${orderItem.bookDto.imageList[0].fileName}`} />)}
         <Details>
@@ -198,15 +155,23 @@ const CartItem = ({ orderItem, handlePickItem }) => {
       </ProductDetail>
       <PriceDetail>
         <ProductAmountContainer className="col-2">
-          <Remove onClick={() => { quantity > 1 ? setQuantity(quantity - 1) : setQuantity(1) }} />
+          <Remove onClick={() => { quantity > 1 ? setQuantity(quantity - 1) : handleDelete(orderItem.id) }} />
           <ProductAmount value={quantity} onChange={e => setQuantity(e.target.value)}></ProductAmount>
           <Add onClick={() => setQuantity(quantity + 1)} />
         </ProductAmountContainer>
       </PriceDetail>
+      {dialog.isLoading && (
+        <Dialog
+        title={dialog.title}
+        onDialog={areUSureDelete}
+        message={dialog.message}
+            />
+        )}
       <ProductPrice className="col-3">
         <NumericFormat value={orderItem.price} displayType={'text'} thousandSeparator={true} suffix={'₫'} />
       </ProductPrice>
     </Product>
+
   );
 };
 

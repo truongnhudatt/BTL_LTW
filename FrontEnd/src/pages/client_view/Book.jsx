@@ -7,13 +7,13 @@ import axios from "axios";
 import 'react-slideshow-image/dist/styles.css'
 import { Fade } from "react-slideshow-image";
 import { NumericFormat } from "react-number-format";
-import Navbarr from "../../components/Navbar";
 import ReactStars from "react-rating-stars-component";
 import { fontWeight } from "@mui/system";
 import Table from 'react-bootstrap/Table';
 import { Icon } from "@mui/material";
 import "../../css/book.css"
 import moment from 'moment';
+import Header from "../../components/Header";
 const Container = styled.div`
   background-color: rgb(245, 245, 250);
   padding-bottom:10px;
@@ -253,23 +253,27 @@ const Book = () => {
     setScore(newRating);
   };
   const addToOrder = () => {
-    const data = {
-      username: "truongnhudat",
-      orderDetailRequest: {
-        bookId: id,
-        quantity: quantity
-      }
-    };
-    axios.post("http://localhost:8080/api/v1/orders/create", data, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        Accept: "application/json"
-      }
-    })
-    setTimeout(() => {
-      navigate("/cart")
-    }, 500);
-    // navigate("/cart")
+    if(user) {
+      const data = {
+        username: user.username,
+        orderDetailRequest: {
+          bookId: id,
+          quantity: quantity
+        }
+      };
+      axios.post("http://localhost:8080/api/v1/orders/create", data, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          Accept: "application/json"
+        }
+      })
+      setTimeout(() => {
+        navigate("/cart")
+      }, 500);
+    }
+    else{
+      window.location.href = "http://localhost:3000/login"
+    }
   }
 
   const postReview = () => {
@@ -332,7 +336,7 @@ const Book = () => {
   }, [id])
   return (
     <Container>
-      <Navbarr />
+      <Header />
       <Wrapper>
         <ImgContainer>
           <div className="slide-container" style={{ width: "500px" }}>
@@ -346,7 +350,17 @@ const Book = () => {
                   </div>
                 ))}
               </Fade>
-            ) : (images.length === 1 ? <div className="image-container"><img src={images[0]} alt=" ho ho" width="50%" height="50%" /></div> : <></>)}
+            ) : (images.length === 1 ? <>
+              <Fade cssClass="display-image" autoplay={true} duration={500}>
+                {images.map((image, index) => (
+                  <div className="each-fade" key={index}>
+                    <div className="image-container">
+                      <Image src={`http://localhost:8080/api/v1/books/image/${images[index].fileName}`} />
+                    </div>
+                  </div>
+                ))}
+              </Fade>
+            </> : <></>)}
           </div>
         </ImgContainer>
         <div style={{ flex: "1 1 0%", display: "block" }}>

@@ -18,4 +18,5 @@ public class BillDto {
     private List<OrderDetailDto> orderDetailDto;
     private float totalPrice;
     private Date created;
+    private String billStatus;
 }

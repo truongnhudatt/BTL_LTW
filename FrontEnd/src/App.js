@@ -8,6 +8,8 @@ import Login from './pages/client_view/Login';
 import Signup from './pages/client_view/Signup';
 import BookAdmin from './pages/admin_view/BookAdmin';
 import Addbook from './pages/admin_view/Addbook';
+import Payment from './pages/client_view/Payment';
+import HistoryOrder from './pages/client_view/HistoryOrder';
 function App() {
   return (
     <div className="App">
@@ -21,6 +23,8 @@ function App() {
           <Route path="/register" element={<Signup />} />
           <Route path="/admin/control/book" element={<BookAdmin />} />
           <Route path="/admin/control/book/:id" element={<Addbook />} />
+          <Route path="/checkout/payment" element={<Payment />} />
+          <Route path="/history" element={<HistoryOrder />} />
 
         </Routes>
       </BrowserRouter>

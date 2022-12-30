@@ -11,13 +11,14 @@ import com.example.backend_final.repository.OrderDetailRepo;
 import com.example.backend_final.service.BillService;
 import com.example.backend_final.service.OrderService;
 import com.example.backend_final.service.UserService;
+import com.example.backend_final.util.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +55,7 @@ public class BillServiceImpl implements BillService {
         bill.setCreated(new Date());
         bill.setTotalPrice(bill.getOrderDetailList().stream().map(OrderDetail::getUnitPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
         bill.getOrderDetailList().forEach(b -> b.setBill(bill));
+        bill.setBillStatus(OrderStatus.DELIVERED);
         user.getBillList().add(bill);
         Bill rp = billRepo.save(bill);
         List<CartItem> itemList = billRequest.getListOrderDetailId().stream().map(idx -> cartItemRepo.findById(idx).orElseThrow()).collect(Collectors.toList());
@@ -87,7 +89,15 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public Page<Bill> findAll(Pageable pageable) {
-        return billRepo.findAll(pageable);
+    public Page<Bill> findAll(org.springframework.data.domain.Pageable pageable) {
+        return null;
+    }
+
+
+
+    @Override
+    @Query("SELECT b FROM Bill b JOIN b.user u WHERE u.username = ?1")
+    public Page<Bill> findAllByUsername(String username, Pageable pageable) {
+        return billRepo.findAllByUsername(username, pageable);
     }
 }
